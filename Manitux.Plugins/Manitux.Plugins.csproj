@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="CodeLogic">
+      <HintPath>..\Manitux.Core\CodeLogic.dll</HintPath>
+    </Reference>
+    <Reference Include="Manitux.Core">
+      <HintPath>..\Manitux.Core\Manitux.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="TlsClient.Api">
+      <HintPath>..\Manitux.Core\TlsClient.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="TlsClient.Core">
+      <HintPath>..\Manitux.Core\TlsClient.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="TlsClient.Native">
+      <HintPath>..\Manitux.Core\TlsClient.Native.dll</HintPath>
+    </Reference>
+    <Reference Include="TMDbLib">
+      <HintPath>..\Manitux.Core\TMDbLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
