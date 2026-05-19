@@ -1,3 +1,0 @@
-# Manitux Plugin Repository
-
-This repository contains a collection of plugins for [Manitux](https://github.com/manitux-app/manitux)
