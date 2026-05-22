@@ -4,12 +4,9 @@
     "status": 1,
     "version": 1,
     "apiVersion": 1,
-    "name": "Manitux Plugin",
-    "internalName": "Manitux.Plugins",
     "authors": [
       "Manitux"
     ],
-    "description": "Dailymotion, TMDb",
     "repositoryUrl": "https://github.com/manitux-app/manitux-plugins",
     "plugins": [
       {
@@ -42,6 +39,30 @@
         "description": "Invidious is an open source alternative front-end to YouTube",
         "language": "en",
         "iconUrl": "https://www.google.com/s2/favicons?domain=invidious.io&sz=64",
+        "isAdult": false,
+        "tvTypes": [
+          "Movie",
+          "TvSeries"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/manitux-app/manitux-plugins/builds/Dailymotion.dll",
+    "status": 1,
+    "version": 1,
+    "apiVersion": 1,
+    "authors": [
+      "Manitux"
+    ],
+    "repositoryUrl": "https://github.com/manitux-app/manitux-plugins",
+    "plugins": [
+      {
+        "name": "Dailymotion",
+        "internalName": "plugin.dailymotion",
+        "description": "The home for videos that matter",
+        "language": "en",
+        "iconUrl": "https://www.google.com/s2/favicons?domain=dailymotion.com&sz=64",
         "isAdult": false,
         "tvTypes": [
           "Movie",
