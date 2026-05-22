@@ -41,7 +41,7 @@
         "internalName": "plugin.invidious",
         "description": "Invidious is an open source alternative front-end to YouTube",
         "language": "en",
-        "iconUrl": "https://www.google.com/s2/favicons?domain=https://invidious.io&sz=64",
+        "iconUrl": "https://www.google.com/s2/favicons?domain=invidious.io&sz=64",
         "isAdult": false,
         "tvTypes": [
           "Movie",
