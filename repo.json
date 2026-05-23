@@ -1,6 +1,6 @@
 {
   "name": "Manitux Plugin Repository",
-  "description": "Manitux Extensions Repository",
+  "description": "This repository contains a collection of plugins for Manitux",
   "iconUrl": "https://www.google.com/s2/favicons?domain=github.com&sz=64",
   "manifestVersion": 1,
   "pluginLists": [
