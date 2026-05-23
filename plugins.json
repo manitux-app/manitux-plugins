@@ -44,6 +44,18 @@
           "Movie",
           "TvSeries"
         ]
+      },
+      {
+       "name": "InternetArchive",
+        "internalName": "plugin.internetarchive",
+        "description": "Internet Archive is a non-profit library of millions of free texts, movies, software, music, websites, and more",
+        "language": "en",
+        "iconUrl": "https://www.google.com/s2/favicons?domain=archive.org&sz=64",
+        "isAdult": false,
+        "tvTypes": [
+          "Movie",
+          "TvSeries"
+        ]
       }
     ]
   },
