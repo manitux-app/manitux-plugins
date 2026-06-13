@@ -8,7 +8,7 @@ Repo.json dosyasının ham URL'sini Manitux uygulama ayarları sayfasına ekleyi
 
 https://raw.githubusercontent.com/manitux-app/manitux-plugins/main/repo.json
 
-Kısa kod (cutt.ly ile oluşturulması gerekir): manitrepo
+Kısa kod ([tiny](https://tinyurl.com/) ile oluşturulması gerekir): manitrepo
 
 ## Eklenti gelistiricileri icin repo hazirligi
 
