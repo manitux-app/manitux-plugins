@@ -12,27 +12,27 @@ Kısa kod (cutt.ly ile oluşturulması gerekir): manitrepo
 
 ## Eklenti gelistiricileri icin repo hazirligi
 
-Bu repo iki parcali bir yayin akisi kullanir:
+Bu repo tek dal uzerinden yayinlanir:
 
-- `main` dali kaynak kodu ve ust repo manifestini tutar.
-- `builds` dali derlenmis eklenti DLL'lerini ve Manitux'un okuyacagi eklenti listesini tutar.
+- `main` dali kaynak kodunu, ust repo manifestini ve yayin ciktilarini birlikte tutar.
+- `builds/` dizini derlenmis eklenti DLL'lerini ve Manitux'un okuyacagi eklenti listesini tutar.
 
-`repo.json`, Manitux uygulamasina eklenen ana manifesttir. Bu dosyadaki `pluginLists` alani su anda `builds` dalindaki `plugins.json` dosyasini isaret eder:
+`repo.json`, Manitux uygulamasina eklenen ana manifesttir. Bu dosyadaki `pluginLists` alani su anda `main` dali altindaki `builds/plugins.json` dosyasini isaret eder:
 
 ```json
 "pluginLists": [
-  "https://raw.githubusercontent.com/manitux-app/manitux-plugins/builds/plugins.json"
+  "https://raw.githubusercontent.com/manitux-app/manitux-plugins/main/builds/plugins.json"
 ]
 ```
 
-Bu nedenle yeni bir eklentiyi yayinlamak icin yalnizca kaynak kodu eklemek yeterli degildir; derlenmis DLL ve metadata da `builds` tarafina eklenmelidir.
+Bu nedenle yeni bir eklentiyi yayinlamak icin yalnizca kaynak kodu eklemek yeterli degildir; derlenmis DLL ve metadata da repo icindeki `builds/` dizinine eklenmelidir.
 
 Yerel calisma duzeni soyledir:
 
 - Kaynak repo: `manitux-plugins`
-- Yayin/build repo: `../manitux-plugins-builds`
-- Yayin listesi: `../manitux-plugins-builds/plugins.json`
-- Yayin DLL'leri: `../manitux-plugins-builds/*.dll`
+- Yayin/build dizini: `builds/`
+- Yayin listesi: `builds/plugins.json`
+- Yayin DLL'leri: `builds/*.dll`
 
 Yeni veya guncellenen bir eklenti hazirlarken genel akis:
 
@@ -44,12 +44,12 @@ Yeni veya guncellenen bir eklenti hazirlarken genel akis:
 dotnet build Manitux.Plugins/Manitux.Plugins.csproj -c Release
 ```
 
-4. Olusan DLL'i `../manitux-plugins-builds/` altina kopyala. Ortak paket icin beklenen dosya adi su anda `Manitux.Plugins.dll` olarak kullaniliyor.
-5. `../manitux-plugins-builds/plugins.json` dosyasinda ilgili DLL kaydini guncelle.
+4. Olusan DLL'i `builds/` altina kopyala. Ortak paket icin beklenen dosya adi su anda `Manitux.Plugins.dll` olarak kullaniliyor.
+5. `builds/plugins.json` dosyasinda ilgili DLL kaydini guncelle.
 
 `plugins.json` icindeki her DLL kaydi su bilgileri tasir:
 
-- `url`: DLL'in `builds` dalindaki raw GitHub adresi.
+- `url`: DLL'in `main` dali altindaki `builds/` dizininde bulunan raw GitHub adresi.
 - `status`: Eklentinin yayin durumu. Aktif kayitlar icin `1` kullanilir.
 - `version`: DLL paket versiyonu. DLL icerigi degistiginde artirilmalidir.
 - `apiVersion`: Manitux plugin API versiyonu.
@@ -67,4 +67,4 @@ dotnet build Manitux.Plugins/Manitux.Plugins.csproj -c Release
 - `isAdult`: Yetiskin icerik bilgisi.
 - `tvTypes`: Desteklenen icerik tipleri.
 
-Kaynak kodu `main` dalina, `../manitux-plugins-builds` klasorundeki DLL ve `plugins.json` degisiklikleri ise `builds` dalina commitlenmelidir. Manitux uygulamasi `repo.json` uzerinden `plugins.json` dosyasina, oradan da raw DLL URL'lerine ulasir.
+Kaynak kodu, `builds/` altindaki DLL dosyalari ve `builds/plugins.json` degisiklikleri ayni `main` dalina commitlenmelidir. Manitux uygulamasi `repo.json` uzerinden `builds/plugins.json` dosyasina, oradan da raw DLL URL'lerine ulasir.

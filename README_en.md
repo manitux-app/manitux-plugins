@@ -10,27 +10,27 @@ Short code (It needs to be created with cutt.ly): manitrepo
 
 ## Repository setup for plugin developers
 
-This repository uses a two-part publishing flow:
+This repository publishes from a single branch:
 
-- The `main` branch contains the source code and the top-level repository manifest.
-- The `builds` branch contains compiled plugin DLLs and the plugin list read by Manitux.
+- The `main` branch contains the source code, the top-level repository manifest, and the published build outputs.
+- The `builds/` directory contains compiled plugin DLLs and the plugin list read by Manitux.
 
-`repo.json` is the main manifest added to the Manitux app. Its `pluginLists` field currently points to `plugins.json` on the `builds` branch:
+`repo.json` is the main manifest added to the Manitux app. Its `pluginLists` field currently points to `builds/plugins.json` under the `main` branch:
 
 ```json
 "pluginLists": [
-  "https://raw.githubusercontent.com/manitux-app/manitux-plugins/builds/plugins.json"
+  "https://raw.githubusercontent.com/manitux-app/manitux-plugins/main/builds/plugins.json"
 ]
 ```
 
-Because of this, adding source code is not enough to publish a new plugin; the compiled DLL and metadata must also be added to the `builds` side.
+Because of this, adding source code is not enough to publish a new plugin; the compiled DLL and metadata must also be added to the in-repository `builds/` directory.
 
 The local workspace layout is:
 
 - Source repository: `manitux-plugins`
-- Publish/build repository: `../manitux-plugins-builds`
-- Published plugin list: `../manitux-plugins-builds/plugins.json`
-- Published DLLs: `../manitux-plugins-builds/*.dll`
+- Publish/build directory: `builds/`
+- Published plugin list: `builds/plugins.json`
+- Published DLLs: `builds/*.dll`
 
 General flow for preparing a new or updated plugin:
 
@@ -42,12 +42,12 @@ General flow for preparing a new or updated plugin:
 dotnet build Manitux.Plugins/Manitux.Plugins.csproj -c Release
 ```
 
-4. Copy the generated DLL to `../manitux-plugins-builds/`. The shared package currently expects the file name `Manitux.Plugins.dll`.
-5. Update the relevant DLL entry in `../manitux-plugins-builds/plugins.json`.
+4. Copy the generated DLL to `builds/`. The shared package currently expects the file name `Manitux.Plugins.dll`.
+5. Update the relevant DLL entry in `builds/plugins.json`.
 
 Each DLL entry in `plugins.json` contains:
 
-- `url`: Raw GitHub URL of the DLL on the `builds` branch.
+- `url`: Raw GitHub URL of the DLL under `builds/` on the `main` branch.
 - `status`: Plugin publish status. Use `1` for active entries.
 - `version`: DLL package version. Increment it when the DLL contents change.
 - `apiVersion`: Manitux plugin API version.
@@ -65,4 +65,4 @@ Each plugin in the `plugins` list should define at least:
 - `isAdult`: Adult content flag.
 - `tvTypes`: Supported content types.
 
-Commit source code changes to the `main` branch. Commit the DLL and `plugins.json` changes in `../manitux-plugins-builds` to the `builds` branch. The Manitux app reaches `plugins.json` through `repo.json`, then downloads plugins from the raw DLL URLs listed there.
+Commit source code changes, DLL files under `builds/`, and `builds/plugins.json` changes to the same `main` branch. The Manitux app reaches `builds/plugins.json` through `repo.json`, then downloads plugins from the raw DLL URLs listed there.
