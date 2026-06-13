@@ -1,21 +1,23 @@
-# Manitux Plugin Repository
+[English](README_en.md)  
 
-This repository contains a collection of plugins for [Manitux](https://github.com/manitux-app/manitux)
+# Manitux Eklenti Deposu
 
-Add the raw URL of the repo.json file to the Manitux app settings page:
+Bu depo, [Manitux](https://github.com/manitux-app/manitux) için bir eklenti koleksiyonu içermektedir.
+
+Repo.json dosyasının ham URL'sini Manitux uygulama ayarları sayfasına ekleyin:
 
 https://raw.githubusercontent.com/manitux-app/manitux-plugins/main/repo.json
 
-Short code (It needs to be created with cutt.ly): manitrepo
+Kısa kod (cutt.ly ile oluşturulması gerekir): manitrepo
 
-## Repository setup for plugin developers
+## Eklenti gelistiricileri icin repo hazirligi
 
-This repository uses a two-part publishing flow:
+Bu repo iki parcali bir yayin akisi kullanir:
 
-- The `main` branch contains the source code and the top-level repository manifest.
-- The `builds` branch contains compiled plugin DLLs and the plugin list read by Manitux.
+- `main` dali kaynak kodu ve ust repo manifestini tutar.
+- `builds` dali derlenmis eklenti DLL'lerini ve Manitux'un okuyacagi eklenti listesini tutar.
 
-`repo.json` is the main manifest added to the Manitux app. Its `pluginLists` field currently points to `plugins.json` on the `builds` branch:
+`repo.json`, Manitux uygulamasina eklenen ana manifesttir. Bu dosyadaki `pluginLists` alani su anda `builds` dalindaki `plugins.json` dosyasini isaret eder:
 
 ```json
 "pluginLists": [
@@ -23,46 +25,46 @@ This repository uses a two-part publishing flow:
 ]
 ```
 
-Because of this, adding source code is not enough to publish a new plugin; the compiled DLL and metadata must also be added to the `builds` side.
+Bu nedenle yeni bir eklentiyi yayinlamak icin yalnizca kaynak kodu eklemek yeterli degildir; derlenmis DLL ve metadata da `builds` tarafina eklenmelidir.
 
-The local workspace layout is:
+Yerel calisma duzeni soyledir:
 
-- Source repository: `manitux-plugins`
-- Publish/build repository: `../manitux-plugins-builds`
-- Published plugin list: `../manitux-plugins-builds/plugins.json`
-- Published DLLs: `../manitux-plugins-builds/*.dll`
+- Kaynak repo: `manitux-plugins`
+- Yayin/build repo: `../manitux-plugins-builds`
+- Yayin listesi: `../manitux-plugins-builds/plugins.json`
+- Yayin DLL'leri: `../manitux-plugins-builds/*.dll`
 
-General flow for preparing a new or updated plugin:
+Yeni veya guncellenen bir eklenti hazirlarken genel akis:
 
-1. Add or update the plugin class under `Manitux.Plugins/`.
-2. Keep the plugin `PluginManifest.Id` value unique. This value must match `internalName` in `plugins.json`.
-3. Build the project:
+1. Eklenti sinifini `Manitux.Plugins/` altina ekle veya guncelle.
+2. Eklentinin `PluginManifest.Id` degerini benzersiz tut. Bu deger `plugins.json` icindeki `internalName` ile ayni olmalidir.
+3. Projeyi derle:
 
 ```bash
 dotnet build Manitux.Plugins/Manitux.Plugins.csproj -c Release
 ```
 
-4. Copy the generated DLL to `../manitux-plugins-builds/`. The shared package currently expects the file name `Manitux.Plugins.dll`.
-5. Update the relevant DLL entry in `../manitux-plugins-builds/plugins.json`.
+4. Olusan DLL'i `../manitux-plugins-builds/` altina kopyala. Ortak paket icin beklenen dosya adi su anda `Manitux.Plugins.dll` olarak kullaniliyor.
+5. `../manitux-plugins-builds/plugins.json` dosyasinda ilgili DLL kaydini guncelle.
 
-Each DLL entry in `plugins.json` contains:
+`plugins.json` icindeki her DLL kaydi su bilgileri tasir:
 
-- `url`: Raw GitHub URL of the DLL on the `builds` branch.
-- `status`: Plugin publish status. Use `1` for active entries.
-- `version`: DLL package version. Increment it when the DLL contents change.
-- `apiVersion`: Manitux plugin API version.
-- `authors`: Plugin developers.
-- `repositoryUrl`: Source repository URL.
-- `plugins`: Metadata list for the plugins inside the DLL as shown in Manitux.
+- `url`: DLL'in `builds` dalindaki raw GitHub adresi.
+- `status`: Eklentinin yayin durumu. Aktif kayitlar icin `1` kullanilir.
+- `version`: DLL paket versiyonu. DLL icerigi degistiginde artirilmalidir.
+- `apiVersion`: Manitux plugin API versiyonu.
+- `authors`: Eklenti gelistiricileri.
+- `repositoryUrl`: Kaynak repo adresi.
+- `plugins`: DLL icindeki eklentilerin Manitux'ta gorunecek metadata listesi.
 
-Each plugin in the `plugins` list should define at least:
+`plugins` listesindeki her eklenti icin en az su alanlari doldurulmalidir:
 
-- `name`: Display name shown to the user.
-- `internalName`: Manifest `Id` value from the code.
-- `description`: Short description.
-- `language`: Default language code.
-- `iconUrl`: Icon URL.
-- `isAdult`: Adult content flag.
-- `tvTypes`: Supported content types.
+- `name`: Kullaniciya gorunen ad.
+- `internalName`: Kod tarafindaki manifest `Id` degeri.
+- `description`: Kisa aciklama.
+- `language`: Varsayilan dil kodu.
+- `iconUrl`: Ikon adresi.
+- `isAdult`: Yetiskin icerik bilgisi.
+- `tvTypes`: Desteklenen icerik tipleri.
 
-Commit source code changes to the `main` branch. Commit the DLL and `plugins.json` changes in `../manitux-plugins-builds` to the `builds` branch. The Manitux app reaches `plugins.json` through `repo.json`, then downloads plugins from the raw DLL URLs listed there.
+Kaynak kodu `main` dalina, `../manitux-plugins-builds` klasorundeki DLL ve `plugins.json` degisiklikleri ise `builds` dalina commitlenmelidir. Manitux uygulamasi `repo.json` uzerinden `plugins.json` dosyasina, oradan da raw DLL URL'lerine ulasir.
