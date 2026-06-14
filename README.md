@@ -10,14 +10,16 @@ https://raw.githubusercontent.com/manitux-app/manitux-plugins/main/repo.json
 
 Kısa kod ([tiny](https://tinyurl.com/) ile oluşturulması gerekir): manitrepo
 
-## Eklenti gelistiricileri icin repo hazirligi
+## Eklenti geliştiricileri için repo hazırlığı
 
-Bu repo tek dal uzerinden yayinlanir:
+Yeni eklenti geliştirmeye başlamak için örnek proje olarak [PluginTemplate](PluginTemplate/README.md) kullanılabilir. Template README'si derleme, yayınlama ve hazır extractor sınıflarıyla video kaynaklarını çözümleme akışını özetler.
 
-- `main` dali kaynak kodunu, ust repo manifestini ve yayin ciktilarini birlikte tutar.
-- `builds/` dizini derlenmis eklenti DLL'lerini ve Manitux'un okuyacagi eklenti listesini tutar.
+Bu repo tek dal üzerinden yayınlanır:
 
-`repo.json`, Manitux uygulamasina eklenen ana manifesttir. Bu dosyadaki `pluginLists` alani su anda `main` dali altindaki `builds/plugins.json` dosyasini isaret eder:
+- `main` dalı kaynak kodunu, üst repo manifestini ve yayın çıktılarını birlikte tutar.
+- `builds/` dizini derlenmiş eklenti DLL'lerini ve Manitux'un okuyacağı eklenti listesini tutar.
+
+`repo.json`, Manitux uygulamasına eklenen ana manifesttir. Bu dosyadaki `pluginLists` alanı şu anda `main` dalı altındaki `builds/plugins.json` dosyasını işaret eder:
 
 ```json
 "pluginLists": [
@@ -25,46 +27,46 @@ Bu repo tek dal uzerinden yayinlanir:
 ]
 ```
 
-Bu nedenle yeni bir eklentiyi yayinlamak icin yalnizca kaynak kodu eklemek yeterli degildir; derlenmis DLL ve metadata da repo icindeki `builds/` dizinine eklenmelidir.
+Bu nedenle yeni bir eklentiyi yayınlamak için yalnızca kaynak kodu eklemek yeterli değildir; derlenmiş DLL ve metadata da repo içindeki `builds/` dizinine eklenmelidir.
 
-Yerel calisma duzeni soyledir:
+Yerel çalışma düzeni şöyledir:
 
 - Kaynak repo: `manitux-plugins`
-- Yayin/build dizini: `builds/`
-- Yayin listesi: `builds/plugins.json`
-- Yayin DLL'leri: `builds/*.dll`
+- Yayın/build dizini: `builds/`
+- Yayın listesi: `builds/plugins.json`
+- Yayın DLL'leri: `builds/*.dll`
 
-Yeni veya guncellenen bir eklenti hazirlarken genel akis:
+Yeni veya güncellenen bir eklenti hazırlarken genel akış:
 
-1. Eklenti sinifini `Manitux.Plugins/` altina ekle veya guncelle.
-2. Eklentinin `PluginManifest.Id` degerini benzersiz tut. Bu deger `plugins.json` icindeki `internalName` ile ayni olmalidir.
+1. Eklenti sınıfını `Manitux.Plugins/` altına ekle veya güncelle.
+2. Eklentinin `PluginManifest.Id` değerini benzersiz tut. Bu değer `plugins.json` içindeki `internalName` ile aynı olmalıdır.
 3. Projeyi derle:
 
 ```bash
 dotnet build Manitux.Plugins/Manitux.Plugins.csproj -c Release
 ```
 
-4. Olusan DLL'i `builds/` altina kopyala. Ortak paket icin beklenen dosya adi su anda `Manitux.Plugins.dll` olarak kullaniliyor.
-5. `builds/plugins.json` dosyasinda ilgili DLL kaydini guncelle.
+4. Oluşan DLL'i `builds/` altına kopyala. Ortak paket için beklenen dosya adı şu anda `Manitux.Plugins.dll` olarak kullanılıyor.
+5. `builds/plugins.json` dosyasında ilgili DLL kaydını güncelle.
 
-`plugins.json` icindeki her DLL kaydi su bilgileri tasir:
+`plugins.json` içindeki her DLL kaydı şu bilgileri taşır:
 
-- `url`: DLL'in `main` dali altindaki `builds/` dizininde bulunan raw GitHub adresi.
-- `status`: Eklentinin yayin durumu. Aktif kayitlar icin `1` kullanilir.
-- `version`: DLL paket versiyonu. DLL icerigi degistiginde artirilmalidir.
+- `url`: DLL'in `main` dalı altındaki `builds/` dizininde bulunan raw GitHub adresi.
+- `status`: Eklentinin yayın durumu. Aktif kayıtlar için `1` kullanılır.
+- `version`: DLL paket versiyonu. DLL içeriği değiştiğinde artırılmalıdır.
 - `apiVersion`: Manitux plugin API versiyonu.
-- `authors`: Eklenti gelistiricileri.
+- `authors`: Eklenti geliştiricileri.
 - `repositoryUrl`: Kaynak repo adresi.
-- `plugins`: DLL icindeki eklentilerin Manitux'ta gorunecek metadata listesi.
+- `plugins`: DLL içindeki eklentilerin Manitux'ta görünecek metadata listesi.
 
-`plugins` listesindeki her eklenti icin en az su alanlari doldurulmalidir:
+`plugins` listesindeki her eklenti için en az şu alanlar doldurulmalıdır:
 
-- `name`: Kullaniciya gorunen ad.
-- `internalName`: Kod tarafindaki manifest `Id` degeri.
-- `description`: Kisa aciklama.
-- `language`: Varsayilan dil kodu.
-- `iconUrl`: Ikon adresi.
-- `isAdult`: Yetiskin icerik bilgisi.
-- `tvTypes`: Desteklenen icerik tipleri.
+- `name`: Kullanıcıya görünen ad.
+- `internalName`: Kod tarafındaki manifest `Id` değeri.
+- `description`: Kısa açıklama.
+- `language`: Varsayılan dil kodu.
+- `iconUrl`: İkon adresi.
+- `isAdult`: Yetişkin içerik bilgisi.
+- `tvTypes`: Desteklenen içerik tipleri.
 
-Kaynak kodu, `builds/` altindaki DLL dosyalari ve `builds/plugins.json` degisiklikleri ayni `main` dalina commitlenmelidir. Manitux uygulamasi `repo.json` uzerinden `builds/plugins.json` dosyasina, oradan da raw DLL URL'lerine ulasir.
+Kaynak kodu, `builds/` altındaki DLL dosyaları ve `builds/plugins.json` değişiklikleri aynı `main` dalına commitlenmelidir. Manitux uygulaması `repo.json` üzerinden `builds/plugins.json` dosyasına, oradan da raw DLL URL'lerine ulaşır.

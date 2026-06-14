@@ -1,3 +1,5 @@
+[Türkçe](README.md)
+
 # Manitux Plugin Repository
 
 This repository contains a collection of plugins for [Manitux](https://github.com/manitux-app/manitux)
@@ -9,6 +11,8 @@ https://raw.githubusercontent.com/manitux-app/manitux-plugins/main/repo.json
 Short code (It needs to be created with [tiny](https://tinyurl.com/)): manitrepo
 
 ## Repository setup for plugin developers
+
+Use [PluginTemplate](PluginTemplate/README_en.md) as the starter project for new plugin development. Its README summarizes the build, publish, and video source resolution flow with the built-in extractor classes.
 
 This repository publishes from a single branch:
 
