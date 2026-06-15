@@ -2,21 +2,96 @@
 
 # PluginTemplate
 
-`PluginTemplate` is a starter Manitux plugin project for plugin developers. It includes example categories, page items, media details, episodes, and video sources.
+`PluginTemplate` is a standalone starter project for building a new Manitux plugin. A developer can copy this project, rename it for a real plugin, and fill in category, listing, search, media detail, episode, and video source flows.
+
+## Project Structure
+
+- `PluginTemplate.csproj`: Project file for the template plugin.
+- `PluginTemplate.cs`: Sample plugin class containing the manifest, default config, and required Manitux methods.
+- `README.md`: Turkish guide.
+- `README_en.md`: English guide.
+
+`PluginTemplate.csproj` defines `AssemblyName` as `PluginTemplate` and `RootNamespace` as `Manitux.PluginTemplate`. Change these values when creating your own plugin.
+
+## Turning It Into a New Plugin
+
+1. Copy the `PluginTemplate/` directory with your new plugin name.
+2. Rename the `.csproj` file and set its `AssemblyName` to the same DLL name.
+3. Change `RootNamespace` to the new namespace.
+4. Update the namespace, class name, `Manifest`, and `Config` fields in `PluginTemplate.cs`.
+5. Choose a unique `Manifest.Id`. This value must match `internalName` in the publish metadata.
+6. Fill `Config.MainUrl`, `Favicon`, `Language`, `UseProxy`, and `IsAdult` for your real plugin.
+7. Replace the sample `Items`, category, search, media, and video source code with real site/API logic.
+
+Example identity fields:
+
+```csharp
+public override PluginManifest Manifest { get; } = new()
+{
+    Id = "plugin.example",
+    Name = "Example",
+    Version = "1.0.0",
+    Description = "Example Manitux plugin.",
+    Author = "Your Name"
+};
+
+public override PluginConfig Config { get; set; } = new()
+{
+    MainUrl = "https://example.com",
+    Favicon = "https://www.google.com/s2/favicons?domain=example.com&sz=64",
+    Language = "en",
+    UseProxy = false,
+    IsAdult = false
+};
+```
 
 ## Build
 
-Run this command from the repository root:
+From the repository root, build the template project with:
 
 ```bash
 dotnet build PluginTemplate/PluginTemplate.csproj -c Release
 ```
 
-The compiled output is created at:
+Build output:
 
 ```text
 PluginTemplate/bin/Release/net10.0/PluginTemplate.dll
 ```
+
+If you copied the plugin under a different name, replace the project path and output DLL name with your own project values.
+
+## Manitux Methods
+
+`PluginTemplate` inherits from `PluginBase` and implements these methods:
+
+- `GetCategories`: Returns the main categories shown in the app.
+- `GetPageItems`: Returns listing items for the selected category and page number.
+- `GetSearchResults`: Returns listing items for a search query.
+- `GetMediaInfo`: Returns detail metadata, episodes, related videos, and video sources for the selected item.
+- `GetVideoSources`: Resolves the selected video source into a playable source.
+
+Returning `null` for an empty result is consistent with the current template behavior. Where you catch errors, you can use `Log(LogLevel.Error, ex.ToString())`.
+
+## Categories and Listings
+
+The template `GetCategories` method returns fixed sample categories. In a real plugin, the list can be static, fetched from an API, or parsed from the main page HTML.
+
+```csharp
+public override Task<List<CategoryModel>?> GetCategories()
+{
+    return Task.FromResult<List<CategoryModel>?>([
+        new()
+        {
+            Title = "Movies",
+            Url = $"{Config.MainUrl}/movies",
+            Poster = Config.Favicon
+        }
+    ]);
+}
+```
+
+In `GetPageItems`, respect the `pageNumber` value. For sites with pagination, generate the URL from that value; for sites without pagination, returning `null` after the first page is fine.
 
 ## HTTP and HTML Helpers
 
@@ -24,16 +99,14 @@ Because your plugin class inherits from `PluginBase`, you can call `HttpGet`, `H
 
 ### HttpGet
 
-Use `HttpGet` to fetch page HTML, JSON responses, or other text-based API output. It returns `null` for an empty URL; when a request fails it logs the error and also returns `null`. Check the result with `string.IsNullOrWhiteSpace` before parsing it.
-
-Basic usage:
+Use `HttpGet` to fetch page HTML, JSON responses, or other text-based API output. It returns `null` for an empty URL; when a request fails it logs the error and also returns `null`. Check the result before parsing it.
 
 ```csharp
 var html = await HttpGet(category.Url, referer: Config.MainUrl);
 if (string.IsNullOrWhiteSpace(html)) return null;
 ```
 
-Custom headers and proxy usage:
+Custom headers and proxy example:
 
 ```csharp
 var headers = new Dictionary<string, string>
@@ -52,13 +125,13 @@ var html = await HttpGet(
 
 Main parameters:
 
-- `referer`: sends the referer value expected by the target site. When omitted, the normal HTTP flow uses the URL itself as referer.
-- `proxyUrl`: routes the HTTP request through this proxy when needed.
-- `headers`: uses your header list instead of the default headers.
-- `identifier`: switches the request to the TlsClient flow when a value is provided.
-- `useCookie`: enables a custom cookie jar for the TlsClient request.
-- `followRedirects`: controls whether redirects are followed.
-- `cookieOutput`: can be used with `useCookie` to read cookies returned by the response.
+- `referer`: Sends the referer value expected by the target site.
+- `proxyUrl`: Routes requests through a proxy.
+- `headers`: Uses your header list instead of the default headers.
+- `identifier`: Switches the request to the TlsClient flow when a value is provided.
+- `useCookie`: Enables a custom cookie jar for the TlsClient request.
+- `followRedirects`: Controls whether redirects are followed.
+- `cookieOutput`: Can be used with `useCookie` to read cookies returned by the response.
 
 ### TlsClient Usage
 
@@ -75,7 +148,7 @@ var html = await HttpGet(
     useCookie: true);
 ```
 
-`Cloudscraper` is usually useful for Cloudflare-like protected pages, while `Chrome144` is a good browser-like default for regular pages. `HttpGet` chooses the appropriate TlsClient path for the current operating system; your plugin does not need to create a separate client.
+`Chrome144` is a good starting point for regular browser-like requests. `Cloudscraper` can be tried for Cloudflare-like protected pages. Your plugin does not need to create a separate TlsClient; `HttpGet` selects the appropriate flow.
 
 To collect cookies:
 
@@ -90,7 +163,7 @@ var html = await HttpGet(
 
 ### HtmlParse
 
-`HtmlParse` converts an HTML string into an AngleSharp `IHtmlDocument`. It can return `null` for empty or unparseable HTML, so check the returned document before using it. `using var` is enough for the document lifetime.
+`HtmlParse` converts an HTML string into an AngleSharp `IHtmlDocument`. It can return `null` for empty or unparseable HTML.
 
 ```csharp
 var html = await HttpGet(category.Url, referer: Config.MainUrl);
@@ -114,21 +187,34 @@ var items = document
 
 Common methods:
 
-- `QuerySelector("css")`: returns the first matching element.
-- `QuerySelectorAll("css")`: returns all matching elements.
-- `TextContent`: reads the visible text from an element.
-- `GetAttribute("href")`, `GetAttribute("src")`, `GetAttribute("content")`: read attribute values.
-- `CleanString`: removes HTML tags, line breaks, tabs, and leftovers such as `&nbsp;`.
-- `FixUrl`: turns relative URLs, `//cdn...` URLs, or backslash-containing values into full URLs.
-- `IsValidUrlFormat`: validates the HTTP/HTTPS URL format.
+- `QuerySelector("css")`: Returns the first matching element.
+- `QuerySelectorAll("css")`: Returns all matching elements.
+- `TextContent`: Reads element text.
+- `GetAttribute("href")`, `GetAttribute("src")`, `GetAttribute("content")`: Read attribute values.
+- `CleanString`: Removes HTML tags, line breaks, tabs, and leftovers such as `&nbsp;`.
+- `FixUrl`: Turns relative URLs, `//cdn...` URLs, or backslash-containing values into full URLs.
+- `IsValidUrlFormat`: Validates the HTTP/HTTPS URL format.
+
+## Media Details
+
+`GetMediaInfo` is called when the app opens a listing item. The template returns direct `VideoSources` for movie-like items and `Episodes` for series-like items.
+
+Common media detail fields:
+
+- `Title`, `Url`, `Poster`, `Backdrop`
+- `Description`, `Tags`, `Rating`, `Year`, `Duration`
+- `Actors`, `Country`
+- `VideoSources`
+- `Episodes`
+- `RelatedVideos`
+
+For single-item content such as movies, you can fill `VideoSources`. For series or season-based content, return `Episodes` and keep each episode URL separate.
 
 ## Resolving Video Sources
 
 Manitux.Core includes ready-made extractor classes. They are defined under `Manitux.Core/Extractors/` and support services such as Dailymotion, YouTube, Okru, MailRu, Voe, VidMoly, StreamWish, Filemoon, MixDrop, StreamTape, Supervideo, Uqload, DoodStream, and others.
 
-If a `VideoSourceModel.Url` matches the `MainUrl` or `SupportedDomains` value of one of these extractor classes, you can use the `ExtractAsync` method directly from your plugin. `PluginBase.ExtractAsync` finds the matching extractor with `ExtractorManager.GetExtractorByUrl`; when a match exists, it calls that extractor's `ExtractAsync(videoSource, referer)` method, otherwise it returns the existing `VideoSourceModel`.
-
-Example:
+If a `VideoSourceModel.Url` matches the `MainUrl` or `SupportedDomains` value of one of these extractor classes, you can use `ExtractAsync` directly from your plugin.
 
 ```csharp
 public override Task<VideoSourceModel?> GetVideoSources(VideoSourceModel videoSource)
@@ -137,13 +223,48 @@ public override Task<VideoSourceModel?> GetVideoSources(VideoSourceModel videoSo
 }
 ```
 
-The extractor result may update `Url`, `Referer`, `Headers`, and `Subtitles`. For supported services, prefer the built-in extractor flow before manually parsing embed or share URLs; write custom source-resolution code only for unmatched sources.
+`PluginBase.ExtractAsync` finds the matching extractor with `ExtractorManager.GetExtractorByUrl`. When a match exists, it calls that extractor's `ExtractAsync(videoSource, referer)` method; otherwise it returns the existing `VideoSourceModel`.
 
-## Publish
+The extractor result may update `Url`, `Referer`, `Headers`, and `Subtitles`. For supported services, prefer the built-in extractor flow before manually parsing embed or share URLs. If the source is not supported, write custom resolution code inside `GetVideoSources`.
 
-This repository now keeps published outputs in the `builds/` directory on the `main` branch. To publish the template plugin, copy the compiled DLL under `builds/` and add an entry for the same DLL to `builds/plugins.json`.
+Example direct playable source:
 
-Example DLL entry:
+```csharp
+return Task.FromResult<VideoSourceModel?>(new VideoSourceModel
+{
+    Name = "Main Source",
+    Url = "https://example.com/video/master.m3u8",
+    Referer = Config.MainUrl,
+    Headers =
+    [
+        new HeaderModel { Name = "User-Agent", Value = "Mozilla/5.0" }
+    ]
+});
+```
+
+## Publish Metadata
+
+The main file added to the Manitux app is `repo.json`. It contains the repository name, description, icon, and the URLs of the plugin lists. The app reads `repo.json` first, then loads DLL entries from the `builds/plugins.json` URL listed in `pluginLists`.
+
+Example `repo.json`:
+
+```json
+{
+  "name": "Manitux Plugin Repository",
+  "description": "This repository contains a collection of plugins for Manitux",
+  "iconUrl": "https://www.google.com/s2/favicons?domain=github.com&sz=64",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/YOUR_GITHUB_USER/YOUR_PLUGIN_REPOSITORY/main/builds/plugins.json"
+  ]
+}
+```
+
+When preparing your own plugin repository, the URL inside `pluginLists` must point to the raw `builds/plugins.json` file in your GitHub repository. Users add the raw `repo.json` URL to Manitux; plugin DLL URLs are resolved from `builds/plugins.json`.
+
+To publish the template plugin, place the compiled DLL under `builds/` and add an entry for that same DLL to `builds/plugins.json`. The file name in `url` must match the compiled DLL name.
+
+Example entry:
 
 ```json
 {
@@ -167,4 +288,27 @@ Example DLL entry:
 }
 ```
 
-Replace the sample data in `PluginTemplate.cs` with real category, listing, media metadata, and video source extraction logic. The `PluginManifest.Id` value in code must match the `internalName` value in `builds/plugins.json`.
+Field mapping:
+
+- `repo.json.pluginLists`: One or more `plugins.json` URLs that Manitux will read.
+- `url`: Raw GitHub URL of the DLL.
+- `version`: Package version to increment when the DLL contents change.
+- `apiVersion`: Manitux plugin API version.
+- `plugins[].internalName`: Must match the code-side `Manifest.Id`.
+- `plugins[].name`: Plugin name shown to the user.
+- `plugins[].description`: Short description.
+- `plugins[].language`: Default language code.
+- `plugins[].iconUrl`: Plugin icon URL.
+- `plugins[].isAdult`: Adult content flag.
+- `plugins[].tvTypes`: Supported content types.
+
+## Checklist
+
+- Project name, namespace, class name, and DLL name are updated.
+- `Manifest.Id` is unique and matches `internalName` in `plugins.json`.
+- `Config.MainUrl`, `Favicon`, `Language`, and `IsAdult` are correct.
+- `GetCategories`, `GetPageItems`, `GetSearchResults`, `GetMediaInfo`, and `GetVideoSources` work with real data.
+- Empty HTTP responses and error cases are handled.
+- Relative URLs from HTML parsing are converted with `FixUrl`.
+- `ExtractAsync` is used for supported video sources.
+- Release build is created and the DLL name matches the metadata `url`.
